@@ -1,6 +1,28 @@
 const commando = require('discord.js-commando');
+const Discord = require('discord.js');
 
-const bot = new commando.Client();
+const embed = new Discord.RichEmbed()
+  .setImage('https://images-na.ssl-images-amazon.com/images/M/MV5BMjA2Mzg2NDMzNl5BMl5BanBnXkFtZTgwMjcwODUzOTE@._V1_SX3000.jpg')
+  .setAuthor('Kubo and the Two Strings')
+  /*
+   * Alternatively, use '#00AE86', [0, 174, 134] or an integer number.
+   */
+  .setColor(0x00AE86)
+  .setDescription('(Animation, Adventure, Family)')
+  .setFooter('Produced by Focus Features')
+  /*
+   * Takes a Date object, defaults to current date.
+   */
+  .setTimestamp()
+  .setURL('http://www.imdb.com/title/tt4302938')
+  /*
+   * Inline fields may not display as inline if the thumbnail and/or image is too big.
+   */
+  .addField('Year', '2016', true)
+  .addField('Rating', '7.9', true)
+  .addField('Runtime', '101 min', true)
+  .addField('Language', 'English', true)
+  .addField('Plot', 'lorem ipsum dolor sit emet lorem ipsum dolor sit emet lorem ipsum dolor sit emet lorem ipsum dolor sit emet lorem ipsum dolor sit emet .', false)
 
 class test extends commando.Command {
     constructor(client) {
@@ -13,53 +35,8 @@ class test extends commando.Command {
     }
 
     async run(message, args) {
-        message.channel.sendMessage('Type **1** or **2**')
-            .then(() => {
-                message.channel.awaitMessages(response => response.content === "1", {
-                        max: 1,
-                        time: 30000,
-                        errors: ['time']
-                    })
-                    .then((collected) => {
-                        message
-                            .channel
-                            .sendMessage(`The collected message was: ${collected.first().content}`);
-                            console.log(collected.first().content);
-                    })
-                    .catch(() => {
-                        message
-                            .channel
-                            .sendMessage('There was no collected message that passed the filter within the time limit!');
-                    });
-
-                    message.channel.awaitMessages(response => response.content === "2", {
-                        max: 1,
-                        time: 30000,
-                        errors: ['time']
-                    })
-                    .then((collected) => {
-                        message
-                            .channel
-                            .sendMessage(`The collected message was: ${collected.first().content}`);
-                            console.log(collected.first().content);
-                    })
-                    .catch(() => {
-                        message
-                            .channel
-                            .sendMessage('There was no collected message that passed the filter within the time limit!');
-                    });
-            });
-
-            var allArgs = args.split(" ");
-        var typeArg = allArgs[0].toString().replace(" ", "").toLowerCase(),
-            searchArg = args.toString().replace(allArgs[0] + " ", "");
-        if(typeArg != "movie"){
-            if(typeArg != "series") {
-                message.channel.sendMessage("omdb command usage : [p]omdb **[type]** **[title]**" + "\n" + "**type : ** movie or series \n");
-                return;
-            }
-        }
-        
+        message.channel.sendEmbed(embed);
     }
 }
+
 module.exports = test;

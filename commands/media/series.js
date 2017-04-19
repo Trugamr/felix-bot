@@ -1,5 +1,6 @@
 const commando = require('discord.js-commando');
 const omdb = require('omdbapi');
+const Discord = require('discord.js');
 
 var fiveRes = new Array();
 
@@ -20,7 +21,8 @@ class series extends commando.Command {
             type: "series",                  // optionnal  ['series', 'episode', 'movie']
             //year: '2011',                 // optionnal
             //page: '1'                     // otionnal (1 to 100)
-        }).then(res => {        
+        }).then(res => { 
+            console.log(res);      
             for(var i = 0; i < 5; i++) {
                 try {
                 fiveRes[i] ="**" + (i+1) + ".** " + res[i].title + " (" + res[i].year + ")";
@@ -46,7 +48,7 @@ class series extends commando.Command {
                         omdb.get({
                             id: ImdbId,
                         }).then(res => {
-                            console.log(res);
+                            
                         var tvTitle = res.title,
                         tvYear = res.year,
                         tvRated = res.rated,
@@ -58,24 +60,55 @@ class series extends commando.Command {
                         tvLanguage = res.language,
                         tvCountry = res.country,
                         tvAwards = res.awards,
-                        tvPoster = res.poster,
+                        tvPoster = res.poster.replace("SX300", "SX1000"),
                         tvImdbRating = res.imdbrating,
-                        tvTotalSeasons = res.totalseasons;
+                        tvTotalSeasons = res.totalseasons,
+                        tvStatus;
+                    if(tvYear.toString().length == "5") {
+                        tvStatus = "Continuing";
+                    } else { tvStatus = "Ended"; }
                     var tvGenreArr = new Array();
                     for(var i = 0; i < 3; i++) {
                         tvGenreArr[i] = res.genre[i];
                     }
+                    const embed = new Discord.RichEmbed()
+                                .setImage(tvPoster.replace("SX300", "SX1000"))
+                                .setAuthor(tvTitle)
+                                /*
+                                * Alternatively, use '#00AE86', [0, 174, 134] or an integer number.
+                                */
+                                .setColor(0xff4c4c)
+                                .setDescription(tvGenreArr.toString().replace(',', ', '))
+                                .setFooter(tvAwards)
+                                /*
+                                * Takes a Date object, defaults to current date.
+                                */
+                                .setTimestamp()
+                                .setURL('http://www.imdb.com/title/' + ImdbId)
+                                /*
+                                * Inline fields may not display as inline if the thumbnail and/or image is too big.
+                                */
+                                .addField('Released', tvReleased, true)
+                                .addField('Status', tvStatus,true)
+                                .addField('Rating', tvImdbRating, true)
+                                .addField('Runtime', tvRuntime, true)
+                                .addField('Seasons', tvTotalSeasons, true)
+                                .addField('Language', tvLanguage, true)
+                                .addField('Plot', tvPlot, false)
+
+
+                            message.channel.sendEmbed(embed);
                                          
-                    message.channel.sendMessage("**Title : **" + tvTitle + "\n" + "**Year : **" + tvYear + "\n" + "**Genre : **" + tvGenreArr.toString()
-                     + "\n" + "**Rating : **" + tvImdbRating + "\n" + "**Runtime : **" + tvRuntime + "\n" + 
-                    "**Language : **" + tvLanguage + "\n" + 
-                    "**Seasons : **" + tvTotalSeasons + "\n" + "**Plot : **" + tvPlot + "\n" + tvPoster);
+                    //message.channel.sendMessage("**Title : **" + tvTitle + "\n" + "**Year : **" + tvYear + "\n" + "**Genre : **" + tvGenreArr.toString()
+                    //+ "\n" + "**Rating : **" + tvImdbRating + "\n" + "**Runtime : **" + tvRuntime + "\n" + 
+                    //"**Language : **" + tvLanguage + "\n" + 
+                    //"**Seasons : **" + tvTotalSeasons + "\n" + "**Plot : **" + tvPlot + "\n" + tvPoster);
                         })
 
                     })
                 });
-        }
-    )}
+        }).catch(err => {message.channel.sendMessage("I can't find anything named " + args + ".")});
+    }
 }
 
 module.exports = series;

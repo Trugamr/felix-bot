@@ -1,9 +1,10 @@
 const Discord = require('discord.js');
 const commando = require('discord.js-commando');
 
+
 const bot = new commando.Client({
     owner: '148432996221845504',
-    commandPrefix : '.'
+    commandPrefix : '.',
 }); 
 
 
@@ -26,3 +27,4 @@ bot.on('message', (message) => {
 });
 
 bot.login('MzAxOTY5MTEzODU5ODgzMDEz.C9CuKw.7rCsNRdqeI0XeCbwyxsZBwvvWt8');
+
